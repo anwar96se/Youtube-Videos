@@ -29,8 +29,11 @@ public class VideosAdapter extends PagedListAdapter<Video, VideosAdapter.VideosH
         }
     };
 
-    public VideosAdapter() {
+    private OnClickListener listener;
+
+    public VideosAdapter(OnClickListener listener) {
         super(DIFF_CALLBACK);
+        this.listener = listener;
     }
 
     @NonNull
@@ -43,9 +46,13 @@ public class VideosAdapter extends PagedListAdapter<Video, VideosAdapter.VideosH
     public void onBindViewHolder(@NonNull VideosHolder holder, int position) {
         Video repoItem = getItem(position);
         if (repoItem != null) {
-            holder.bindView(repoItem);
+            holder.bindView(repoItem, listener);
         }
 
+    }
+
+    public interface OnClickListener {
+        void onClick(Video video);
     }
 
     static class VideosHolder extends RecyclerView.ViewHolder {
@@ -63,7 +70,14 @@ public class VideosAdapter extends PagedListAdapter<Video, VideosAdapter.VideosH
             return new VideosHolder(LayoutInflater.from(view.getContext()).inflate(R.layout.item_video, null, false));
         }
 
-        void bindView(Video video) {
+        void bindView(final Video video, final OnClickListener listener) {
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (listener != null)
+                        listener.onClick(video);
+                }
+            });
             text.setText(video.getName());
             Glide.with(itemView).load(video.getThumbnail()).into(thumbnail);
         }

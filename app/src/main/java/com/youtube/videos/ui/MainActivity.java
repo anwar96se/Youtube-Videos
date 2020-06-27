@@ -13,9 +13,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.youtube.videos.R;
 import com.youtube.videos.adapter.VideosAdapter;
+import com.youtube.videos.api.VideoViewModel;
 import com.youtube.videos.model.Video;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements VideosAdapter.OnClickListener {
 
     private View emptyList;
     private RecyclerView recyclerView;
@@ -38,11 +39,16 @@ public class MainActivity extends AppCompatActivity {
                 adapter.submitList(items);
             }
         });
-        recyclerView.setAdapter(adapter = new VideosAdapter());
+        recyclerView.setAdapter(adapter = new VideosAdapter(this));
     }
 
     private void showEmptyList(boolean show) {
         recyclerView.setVisibility(!show ? View.VISIBLE : View.GONE);
         emptyList.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void onClick(Video video) {
+        VideoPlayerActivity.newIntent(this, video);
     }
 }
